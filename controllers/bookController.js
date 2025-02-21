@@ -41,6 +41,17 @@ exports.addBook = async (req, res) => {
 
     const cloudinaryResult = await cloudinary.uploader.upload(req.file.path);
 
+        // ✅ Parse `chapters` if it's sent as a JSON string
+        let chapters = [];
+        if (req.body.chapters) {
+          try {
+            chapters = JSON.parse(req.body.chapters); // Convert string to array
+          } catch (error) {
+            return res.status(400).json({ error: "Invalid chapters format" });
+          }
+        }
+    
+
     const newBook = new Book({
       title: req.body.title,
       author: req.body.author,
@@ -50,6 +61,7 @@ exports.addBook = async (req, res) => {
       genre: req.body.genre,
       year: req.body.year,
       image: cloudinaryResult.secure_url,
+      chapters: chapters, 
     });
 
     await newBook.save();
