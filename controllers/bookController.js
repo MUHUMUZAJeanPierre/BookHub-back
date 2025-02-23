@@ -10,14 +10,31 @@ const storage = multer.diskStorage({
 });
 
 
+// exports.getAllBooks = async (req, res) => {
+//   try {
+//     const books = await Book.find();
+//     res.status(200).json({ data: books, message: "Books retrieved successfully" });
+//   } catch (error) {
+//     res.status(500).json({ error: "Server error" });
+//   }
+// };
+
 exports.getAllBooks = async (req, res) => {
   try {
-    const books = await Book.find();
+    const { category } = req.query; 
+
+    let filter = {};
+    if (category) {
+      filter.categories = category; 
+    }
+
+    const books = await Book.find(filter);
     res.status(200).json({ data: books, message: "Books retrieved successfully" });
   } catch (error) {
     res.status(500).json({ error: "Server error" });
   }
 };
+
 
 exports.getBookById = async (req, res) => {
   try {
@@ -41,11 +58,10 @@ exports.addBook = async (req, res) => {
 
     const cloudinaryResult = await cloudinary.uploader.upload(req.file.path);
 
-        // ✅ Parse `chapters` if it's sent as a JSON string
         let chapters = [];
         if (req.body.chapters) {
           try {
-            chapters = JSON.parse(req.body.chapters); // Convert string to array
+            chapters = JSON.parse(req.body.chapters); 
           } catch (error) {
             return res.status(400).json({ error: "Invalid chapters format" });
           }
