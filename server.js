@@ -5,6 +5,7 @@ const connectDB = require("./config/db");
 const bookRoutes = require("./routes/bookRoutes");
 const errorHandler = require("./middleware/errorHandler");
 const authRoutes = require("./routes/autRoutes");
+const subscribeRoute = require("./routes/SubscribeRoute");
 
 dotenv.config();
 connectDB();
@@ -15,6 +16,8 @@ app.use(express.json());
 
 app.use("/api/books", bookRoutes);
 app.use("/", authRoutes);
+app.use("/subscribe", subscribeRoute);
+
 
 app.use(errorHandler);
 
